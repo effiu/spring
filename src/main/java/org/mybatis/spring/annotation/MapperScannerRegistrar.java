@@ -1,12 +1,12 @@
 /**
  * Copyright 2010-2020 the original author or authors.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,8 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * {@link ImportBeanDefinitionRegistrar}允许Mybatis Mapper扫描的注解配置。使用一个@Enable注解允许通过@Component配置注册bean。
+ *
  * A {@link ImportBeanDefinitionRegistrar} to allow annotation configuration of MyBatis mapper scanning. Using
  * an @Enable annotation allows beans to be registered via @Component configuration, whereas implementing
  * {@code BeanDefinitionRegistryPostProcessor} will work for XML configuration.
@@ -65,19 +67,24 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 
   /**
    * {@inheritDoc}
+   *
+   * @see org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader#loadBeanDefinitions(java.util.Set)
+   * 会遍历调用该方法，且类非public修饰
    */
   @Override
   public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    // 获取启动类上MapperScan注解属性
     AnnotationAttributes mapperScanAttrs = AnnotationAttributes
-        .fromMap(importingClassMetadata.getAnnotationAttributes(MapperScan.class.getName()));
+      .fromMap(importingClassMetadata.getAnnotationAttributes(MapperScan.class.getName()));
+    // 存在该注解时
     if (mapperScanAttrs != null) {
       registerBeanDefinitions(importingClassMetadata, mapperScanAttrs, registry,
-          generateBaseBeanName(importingClassMetadata, 0));
+        generateBaseBeanName(importingClassMetadata, 0));
     }
   }
 
   void registerBeanDefinitions(AnnotationMetadata annoMeta, AnnotationAttributes annoAttrs,
-      BeanDefinitionRegistry registry, String beanName) {
+                               BeanDefinitionRegistry registry, String beanName) {
 
     BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperScannerConfigurer.class);
     builder.addPropertyValue("processPropertyPlaceHolders", true);
@@ -114,13 +121,13 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 
     List<String> basePackages = new ArrayList<>();
     basePackages.addAll(
-        Arrays.stream(annoAttrs.getStringArray("value")).filter(StringUtils::hasText).collect(Collectors.toList()));
+      Arrays.stream(annoAttrs.getStringArray("value")).filter(StringUtils::hasText).collect(Collectors.toList()));
 
     basePackages.addAll(Arrays.stream(annoAttrs.getStringArray("basePackages")).filter(StringUtils::hasText)
-        .collect(Collectors.toList()));
+      .collect(Collectors.toList()));
 
     basePackages.addAll(Arrays.stream(annoAttrs.getClassArray("basePackageClasses")).map(ClassUtils::getPackageName)
-        .collect(Collectors.toList()));
+      .collect(Collectors.toList()));
 
     if (basePackages.isEmpty()) {
       basePackages.add(getDefaultBasePackage(annoMeta));
@@ -162,12 +169,12 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
       AnnotationAttributes mapperScansAttrs = AnnotationAttributes
-          .fromMap(importingClassMetadata.getAnnotationAttributes(MapperScans.class.getName()));
+        .fromMap(importingClassMetadata.getAnnotationAttributes(MapperScans.class.getName()));
       if (mapperScansAttrs != null) {
         AnnotationAttributes[] annotations = mapperScansAttrs.getAnnotationArray("value");
         for (int i = 0; i < annotations.length; i++) {
           registerBeanDefinitions(importingClassMetadata, annotations[i], registry,
-              generateBaseBeanName(importingClassMetadata, i));
+            generateBaseBeanName(importingClassMetadata, i));
         }
       }
     }

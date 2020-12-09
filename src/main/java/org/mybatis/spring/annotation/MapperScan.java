@@ -30,9 +30,11 @@ import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.Import;
 
 /**
+ * 当使用Java Config的方式时使用该注解注册Mybatis Mapper接口。
  * Use this annotation to register MyBatis mapper interfaces when using Java Config. It performs when same work as
  * {@link MapperScannerConfigurer} via {@link MapperScannerRegistrar}.
  *
+ * 指定{@link #basePackageClasses}或者{@link #basePackages}定义扫描指定的package。从2.0.4开始，若未指定package，将会从生命该注解的类开始扫描。
  * <p>
  * Either {@link #basePackageClasses} or {@link #basePackages} (or its alias {@link #value}) may be specified to define
  * specific packages to scan. Since 2.0.4, If specific packages are not defined, scanning will occur from the package of
